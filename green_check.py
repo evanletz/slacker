@@ -12,6 +12,7 @@ def move_mouse():
         time.sleep(5)
         auto.moveRel(-100, 0, duration=0.2)
         auto.click()
+        time.sleep(5)
 
 def interface():
     '''
@@ -27,15 +28,22 @@ def interface():
 
     while True:
         event, values = window.read()
-        print(event, values)
+
         if event == '-START-' and window['-STATUS-'].get() == 'Stopped':
             window['-STATUS-'].update('Running', text_color='green')
             sp = subprocess.Popen(["python", '-c', 'from green_check import move_mouse; move_mouse()'])
+        
         if event == '-STOP-' and window['-STATUS-'].get() == 'Running':
             window['-STATUS-'].update('Stopped', text_color='red')
             sp.kill()
+        
         if event is None:
+            try:
+                sp.kill()
+            except NameError:
+                pass
             break
+    
     window.close()
 
 if __name__ == "__main__":
